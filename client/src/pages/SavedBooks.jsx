@@ -1,5 +1,4 @@
 import { Container, Card, Button, Row, Col } from 'react-bootstrap';
-
 import { useQuery, useMutation } from '@apollo/client';
 import { QUERY_ME } from '../utils/queries';
 import { REMOVE_BOOK } from '../utils/mutations';
@@ -9,6 +8,7 @@ import Auth from '../utils/auth';
 
 const SavedBooks = () => {
   const { loading, data } = useQuery(QUERY_ME);
+  // eslint-disable-next-line no-unused-vars
   const [removeBook, { error }] = useMutation(REMOVE_BOOK);
 
   const userData = data?.me || {};
@@ -21,6 +21,7 @@ const SavedBooks = () => {
     }
 
     try {
+      // eslint-disable-next-line no-unused-vars
       const { data } = await removeBook({
         variables: { bookId },
       });
@@ -37,9 +38,10 @@ const SavedBooks = () => {
 
   return (
     <>
+      {/* eslint-disable-next-line react/no-unknown-property */}
       <div fluid className="text-light bg-dark p-5">
         <Container>
-          <h1>Viewing {userData.username}'s books!</h1>
+          <h1>Viewing {userData.username}&apos;s books!</h1>
         </Container>
       </div>
       <Container>
@@ -54,6 +56,7 @@ const SavedBooks = () => {
           <Row>
             {userData.savedBooks?.map((book) => {
               return (
+                // eslint-disable-next-line react/jsx-key
                 <Col md="4">
                   <Card key={book.bookId} border="dark">
                     {book.image ? (
