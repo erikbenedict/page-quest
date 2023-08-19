@@ -38,6 +38,7 @@ To get a local copy up and running follow these simple example steps.
   ```sh
   npm run develop
   ```
+- (!! IMPORTANT !!) Make sure to create a `.env` file in the root. Use the `.env.EXAMPLE` as a template to add your MySQL username, password, and session secrete to create the connection
 
 ## Usage
 
