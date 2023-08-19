@@ -1,20 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Container, Col, Form, Button, Card, Row } from 'react-bootstrap';
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { SAVE_BOOK } from '../utils/mutations';
-import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
+import { QUERY_ME } from '../utils/queries';
 import Auth from '../utils/auth';
 
 const SearchBooks = () => {
+  const { loading, data } = useQuery(QUERY_ME);
   const [searchedBooks, setSearchedBooks] = useState([]);
   const [searchInput, setSearchInput] = useState('');
-  const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
   // eslint-disable-next-line no-unused-vars
   const [saveBook, { error }] = useMutation(SAVE_BOOK);
-
-  useEffect(() => {
-    return () => saveBookIds(savedBookIds);
-  });
+  const userData = data?.me || {};
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
@@ -59,16 +56,18 @@ const SearchBooks = () => {
     }
 
     try {
-      // eslint-disable-next-line no-unused-vars
-      const { data } = await saveBook({
+      await saveBook({
         variables: { bookData: { ...bookToSave } },
       });
-      console.log(savedBookIds);
-      setSavedBookIds([...savedBookIds, bookToSave.bookId]);
     } catch (err) {
       console.error(err);
     }
   };
+
+  if (loading) {
+    return <h2>LOADING...</h2>;
+  }
+
   return (
     <>
       <div className="text-light bg-dark p-5">
@@ -120,14 +119,14 @@ const SearchBooks = () => {
                     <Card.Text>{book.description}</Card.Text>
                     {Auth.loggedIn() && (
                       <Button
-                        disabled={savedBookIds?.some(
-                          (savedId) => savedId === book.bookId
+                        disabled={userData?.savedBooks.some(
+                          (savedBook) => savedBook.bookId === book.bookId
                         )}
                         className="btn-block btn-info"
                         onClick={() => handleSaveBook(book.bookId)}
                       >
-                        {savedBookIds?.some(
-                          (savedId) => savedId === book.bookId
+                        {userData?.savedBooks.some(
+                          (savedBook) => savedBook.bookId === book.bookId
                         )
                           ? 'Book Already Saved!'
                           : 'Save This Book!'}
